@@ -1,7 +1,7 @@
 let mappa;
 let planeMap;
 let canvas;
-const url = 'https://opensky-network.org/api/states/all';
+let url = 'https://opensky-network.org/api/states/all?lamin=35.774266&lomin=-9.595501&lamax=60.939844&lomax=23.079977';
 let time;
 const pos = {
   lat: 0,
@@ -17,6 +17,7 @@ const options = {
   zoom: 1.5,
   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 }
+let planes = [];
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
@@ -29,23 +30,35 @@ function setup() {
 
 const getData = async () => {
   visible = true;
-  params = getURLParams();
-  let icao = params.icao24;
-  if (icao) icao = '?icao24=' + icao;
-  const data = await httpGet(url + icao);
+  const data = await httpGet(url);
   let formatted = JSON.parse(data);
-  pos.lat = formatted.states[0][6];
-  pos.lon = formatted.states[0][5];
-  pos.track = formatted.states[0][10];
-  console.log(formatted)
+  planes = [];
+  for (const state of formatted.states) {
+    planes.push(new Plane(state));
+  }
 }
 
 function draw() {
+  clear();
   if (visible) {
-    clear();
-    const pix = planeMap.latLngToPixel(pos.lat, pos.lon);
+    for (const plane of planes) {
+      plane.show();
+    }
+  }
+}
+
+class Plane {
+  constructor(states) {
+    this.states = states;
+  }
+
+  show() {
+    const lat = this.states[6];
+    const lon = this.states[5];
+    const pix = planeMap.latLngToPixel(lat, lon);
     stroke(0);
-    fill(100, 200, 123, 100);
-    ellipse(pix.x, pix.y, 32, 32);
+    strokeWeight(.5);
+    fill(200, 100, 123, 150);
+    ellipse(pix.x, pix.y, 12, 12);
   }
 }
