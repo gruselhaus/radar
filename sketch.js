@@ -3,7 +3,6 @@ let planeMap;
 let canvas;
 const url = 'https://opensky-network.org/api/states/all';
 let time;
-let plane;
 const pos = {
   lat: 0,
   lon: 0,
@@ -17,10 +16,6 @@ const options = {
   lng: 0,
   zoom: 1.5,
   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
-}
-
-function preload() {
-  plane = loadImage('plane.svg');
 }
 
 function setup() {
@@ -49,7 +44,8 @@ function draw() {
   if (visible) {
     clear();
     const pix = planeMap.latLngToPixel(pos.lat, pos.lon);
-    imageMode(CENTER);
-    image(plane, pix.x, pix.y, 70, 70);
+    stroke(0);
+    fill(100, 200, 123, 100);
+    ellipse(pix.x, pix.y, 32, 32);
   }
 }
