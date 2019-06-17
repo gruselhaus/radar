@@ -1,7 +1,7 @@
 let mappa;
 let planeMap;
 let canvas;
-let url = 'https://opensky-network.org/api/states/all?lamin=35.774266&lomin=-9.595501&lamax=60.939844&lomax=23.079977';
+let url = 'https://opensky-network.org/api/states/all?lamin=49.707526&lomin=7.997795&lamax=50.696854&lomax=9.673431';
 let time;
 const pos = {
   lat: 0,
@@ -12,9 +12,9 @@ const pos = {
 let visible = false;
 let params = null;
 const options = {
-  lat: 0,
-  lng: 0,
-  zoom: 1.5,
+  lat: 50.03364,
+  lng: 8.557677,
+  zoom: 14,
   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 }
 let planes = [];
@@ -25,7 +25,7 @@ function setup() {
   planeMap = mappa.tileMap(options);
   planeMap.overlay(canvas);
   getData();
-  time = setInterval(getData, 5000);
+  time = setInterval(getData, 500);
 }
 
 const getData = async () => {
@@ -56,9 +56,24 @@ class Plane {
     const lat = this.states[6];
     const lon = this.states[5];
     const pix = planeMap.latLngToPixel(lat, lon);
+    const callsign = this.states[1];
     stroke(0);
     strokeWeight(.5);
     fill(200, 100, 123, 150);
     ellipse(pix.x, pix.y, 12, 12);
+    if (callsign === "") {
+      return;
+    }
+    beginShape();
+    stroke(0);
+    strokeWeight(1);
+    noFill();
+    vertex(pix.x + cos(45) * 12, pix.y - sin(135) * 12);
+    vertex(pix.x + 20, pix.y - 15);
+    vertex(pix.x + 80, pix.y - 15);
+    endShape();
+    strokeWeight(.2);
+    fill(0);
+    text(callsign, pix.x + 24, pix.y - 17);
   }
 }
