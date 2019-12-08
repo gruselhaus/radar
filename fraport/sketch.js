@@ -1,7 +1,7 @@
 let mappa;
 let planeMap;
 let canvas;
-let url = "https://opensky-network.org/api/states/all?icao24=";
+let url = "https://opensky-network.org/api/states/all?lamin=49.707526&lomin=7.997795&lamax=50.696854&lomax=9.673431";
 let time;
 const pos = {
   lat: 0,
@@ -12,22 +12,15 @@ const pos = {
 let visible = false;
 let params = null;
 const options = {
-  lat: 0,
-  lng: 0,
-  zoom: 3,
+  lat: 50.03364,
+  lng: 8.557677,
+  zoom: 14,
   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
 };
 let planes = [];
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  let params = getURLParams();
-  if (params.icao24 === undefined || params.icao24 === "") {
-    alert("Please provide a valid icao24 Transponder adress!");
-  } else {
-    const icao24 = params.icao24.toLowerCase();
-    url += icao24;
-  }
   mappa = new Mappa("Leaflet");
   planeMap = mappa.tileMap(options);
   planeMap.overlay(canvas);
