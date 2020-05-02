@@ -70,7 +70,7 @@ class Plane {
     const callsign = this.states[1];
     translate(pix.x, pix.y);
     if (callsign !== "") {
-      text(callsign, 24, 14);
+      text(callsign, 24, 13);
       beginShape();
       stroke(0);
       strokeWeight(1);
