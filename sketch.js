@@ -18,11 +18,12 @@ const options = {
   style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
 };
 
-let planeImage, carImage;
+let planeImage, redPlaneImage, carImage;
 let planes = [];
 
 function preload() {
   planeImage = loadImage("plane.png");
+  redPlaneImage = loadImage("plane-red.png");
   carImage = loadImage("car.png");
 }
 
@@ -68,23 +69,31 @@ class Plane {
     const pix = planeMap.latLngToPixel(lat, lon);
     const callsign = this.states[1];
     translate(pix.x, pix.y);
-    text(callsign, 24, 14);
-    beginShape();
-    stroke(0);
-    strokeWeight(1);
-    noFill();
-    vertex(cos(45) * 12, sin(135) * 12);
-    vertex(20, 15);
-    vertex(80, 15);
-    endShape();
-    strokeWeight(0.2);
-    fill(0);
-    rotate(dir);
-    imageMode(CENTER);
-    if (callsign.includes("APT") || callsign.includes("LEOS")) {
-      image(carImage, 0, 0, 13, 23);
+    if (callsign !== "") {
+      text(callsign, 24, 14);
+      beginShape();
+      stroke(0);
+      strokeWeight(1);
+      noFill();
+      vertex(cos(45) * 12, sin(135) * 12);
+      vertex(20, 15);
+      vertex(80, 15);
+      endShape();
+      strokeWeight(0.2);
+      fill(0);
+      rotate(dir);
+      imageMode(CENTER);
+      if (callsign.includes("APT") || callsign.includes("LEOS") || callsign.includes("FF")) {
+        image(carImage, 0, 0, 13, 23);
+      } else {
+        image(planeImage, 0, 0, 30, 30);
+      }
     } else {
-      image(planeImage, 0, 0, 30, 30);
+      if (callsign.includes("APT") || callsign.includes("LEOS") || callsign.includes("FF")) {
+        image(carImage, 0, 0, 13, 23);
+      } else {
+        image(redPlaneImage, 0, 0, 30, 30);
+      }
     }
     pop();
   }
