@@ -81,7 +81,7 @@ class Plane {
     fill(0);
     rotate(dir);
     imageMode(CENTER);
-    if (callsign.includes(["LEOS","APT"])) {
+    if (callsign.includes("APT") || callsign.includes("LEOS")) {
       image(carImage, 0, 0, 13, 23);
     } else {
       image(planeImage, 0, 0, 30, 30);
