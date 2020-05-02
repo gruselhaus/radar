@@ -1,7 +1,7 @@
 let mappa;
 let planeMap;
 let canvas;
-let url = "https://opensky-network.org/api/states/all?lamin=49.707526&lomin=7.997795&lamax=50.696854&lomax=9.673431";
+let url = "https://opensky-network.org/api/states/all?lamin=49.944079&lomin=8.403252&lamax=50.126740&lomax=8.817649";
 let time;
 const pos = {
   lat: 0,
@@ -33,7 +33,7 @@ function setup() {
   planeMap = mappa.tileMap(options);
   planeMap.overlay(canvas);
   getData();
-  time = setInterval(getData, 500);
+  time = setInterval(getData, 600);
   angleMode(DEGREES);
 }
 
@@ -63,6 +63,22 @@ class Plane {
 
   show() {
     push();
+
+    //Draw boundaries
+    const pos1 = planeMap.latLngToPixel(49.944079, 8.817649);
+    const pos2 = planeMap.latLngToPixel(50.12674, 8.817649);
+    const pos3 = planeMap.latLngToPixel(50.12674, 8.403252);
+    const pos4 = planeMap.latLngToPixel(49.944079, 8.403252);
+
+    push();
+    strokeWeight(2);
+    stroke(255, 0, 0);
+    line(pos1.x, pos1.y, pos2.x, pos2.y);
+    line(pos2.x, pos2.y, pos3.x, pos3.y);
+    line(pos3.x, pos3.y, pos4.x, pos4.y);
+    line(pos4.x, pos4.y, pos1.x, pos1.y);
+    pop();
+
     const lat = this.states[6];
     const lon = this.states[5];
     const dir = this.states[10];
