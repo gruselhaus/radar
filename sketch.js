@@ -99,13 +99,13 @@ class Plane {
       fill(0);
       rotate(dir);
       imageMode(CENTER);
-      if (callsign.includes("FRA") || callsign.includes("APT") || callsign.includes("LEOS") || callsign.includes("FF")) {
+      if (checkCallsign(callsign)) {
         image(carImage, 0, 0, 13, 23);
       } else {
         image(planeImage, 0, 0, 30, 30);
       }
     } else {
-      if (callsign.includes("FRA") || callsign.includes("APT") || callsign.includes("LEOS") || callsign.includes("FF")) {
+      if (checkCallsign(callsign)) {
         image(carImage, 0, 0, 13, 23);
       } else {
         image(redPlaneImage, 0, 0, 30, 30);
@@ -113,4 +113,12 @@ class Plane {
     }
     pop();
   }
+}
+
+function checkCallsign(callsign) {
+  const toBeChecked = ["FRA","EL","APT","LEOS","FF"];
+  for (const elt of toBeChecked) {
+    if (callsign.includes(elt)) return true;
+  }
+  return false;
 }
