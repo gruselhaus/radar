@@ -1,38 +1,39 @@
 let mappa;
 let planeMap;
 let canvas;
-let url = "https://opensky-network.org/api/states/all?icao24=";
+let url = "https://opensky-network.org/api/states/all?lamin=49.707526&lomin=7.997795&lamax=50.696854&lomax=9.673431";
 let time;
 const pos = {
   lat: 0,
   lon: 0,
-  track: 0
+  track: 0,
 };
 
 let visible = false;
 let params = null;
 const options = {
-  lat: 0,
-  lng: 0,
-  zoom: 3,
-  style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+  lat: 50.03364,
+  lng: 8.557677,
+  zoom: 14,
+  style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
 };
+
+let planeImage, carImage;
 let planes = [];
+
+function preload() {
+  planeImage = loadImage("plane.png");
+  carImage = loadImage("car.png");
+}
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  let params = getURLParams();
-  if (params.icao24 === undefined || params.icao24 === "") {
-    alert("Please provide a valid icao24 Transponder adress!");
-  } else {
-    const icao24 = params.icao24.toLowerCase();
-    url += icao24;
-  }
   mappa = new Mappa("Leaflet");
   planeMap = mappa.tileMap(options);
   planeMap.overlay(canvas);
   getData();
   time = setInterval(getData, 500);
+  angleMode(DEGREES);
 }
 
 const getData = async () => {
@@ -60,29 +61,31 @@ class Plane {
   }
 
   show() {
+    push();
     const lat = this.states[6];
     const lon = this.states[5];
+    const dir = this.states[10];
     const pix = planeMap.latLngToPixel(lat, lon);
     const callsign = this.states[1];
-    stroke(0);
-    strokeWeight(0.5);
-    if (callsign === "") {
-      fill(240, 200, 123, 150);
-      ellipse(pix.x, pix.y, 12, 12);
-      return;
-    }
-    fill(100, 200, 123, 200);
-    ellipse(pix.x, pix.y, 12, 12);
+    translate(pix.x, pix.y);
+    text(callsign, 24, 14);
     beginShape();
     stroke(0);
     strokeWeight(1);
     noFill();
-    vertex(pix.x + cos(45) * 12, pix.y - sin(135) * 12);
-    vertex(pix.x + 20, pix.y - 15);
-    vertex(pix.x + 80, pix.y - 15);
+    vertex(cos(45) * 12, sin(135) * 12);
+    vertex(20, 15);
+    vertex(80, 15);
     endShape();
     strokeWeight(0.2);
     fill(0);
-    text(callsign, pix.x + 24, pix.y - 17);
+    rotate(dir);
+    imageMode(CENTER);
+    if (callsign.includes("APT")) {
+      image(carImage, 0, 0, 13, 23);
+    } else {
+      image(planeImage, 0, 0, 30, 30);
+    }
+    pop();
   }
 }
