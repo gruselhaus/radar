@@ -14,8 +14,7 @@ let params = null;
 const options = {
   lat: 50.03364,
   lng: 8.557677,
-  zoom: 14,
-  style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+  zoom: 14
 };
 
 let planeImage, redPlaneImage, carImage;
@@ -29,7 +28,7 @@ function preload() {
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  mappa = new Mappa("Leaflet");
+  mappa = new Mappa("Google", "AIzaSyA3955OSAb_ueR5-7r4ZCifAdhMh3nQbQE");
   planeMap = mappa.tileMap(options);
   planeMap.overlay(canvas);
   getData();
