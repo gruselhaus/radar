@@ -116,9 +116,9 @@ class Plane {
 }
 
 function checkCallsign(callsign) {
-  const toBeChecked = ["FRA","EL","APT","LEOS","FF","V"];
+  const toBeChecked = [RegExp(/^V\d*/), RegExp(/^FRA\d*/), RegExp(/^EL\d*/), RegExp(/^APT\d*/), RegExp(/^LEOS\d*/), RegExp(/^FF\d*/)];
   for (const elt of toBeChecked) {
-    if (callsign.includes(elt)) return true;
+    if (elt.test(callsign)) return true;
   }
   return false;
 }
