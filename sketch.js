@@ -10,14 +10,13 @@ let canvas;
 
 let visible = false;
 
-let planeImage, redPlaneImage, carImage;
+let planeImage, carImage;
 let planes = [];
 
 const toBeChecked = [RegExp(/^V\d*/), RegExp(/^FRA\d*/), RegExp(/^EL\d*/), RegExp(/^APT\d*/), RegExp(/^LEOS\d*/), RegExp(/^FF\d*/)];
 
 function preload() {
   planeImage = loadImage("assets/plane.png");
-  redPlaneImage = loadImage("assets/plane-red.png");
   carImage = loadImage("assets/car.png");
 }
 
@@ -78,10 +77,11 @@ class Plane {
   }
 
   show() {
-    const callsign = this.states[1]; //Callsign
+    const callsign = this.states[1]; // Callsign of the vehicle (8 chars). Can be null if no callsign has been received.
     const pos = planeMap.latLngToPixel(this.states[6], this.states[5]); // plane position (lat, long)
-    const dir = this.states[10]; // real track in degrees
-
+    const on_ground = this.states[8]; // Boolean value which indicates if the position was retrieved from a surface position report.
+    const dir = this.states[10]; // True track in decimal degrees clockwise from north (north=0°). Can be null.
+    const spi = this.states[15]; // Whether flight status indicates special purpose indicator.
     push();
     translate(pos.x, pos.y);
     if (callsign !== "") {
@@ -101,14 +101,15 @@ class Plane {
       if (checkCallsign(callsign)) {
         image(carImage, 0, 0, 13, 23);
       } else {
+        if (!on_ground) tint(0, 255, 0);
+        if (spi) tint(199, 21, 133);
         image(planeImage, 0, 0, 30, 30);
       }
     } else {
-      if (checkCallsign(callsign)) {
-        image(carImage, 0, 0, 13, 23);
-      } else {
-        image(redPlaneImage, 0, 0, 30, 30);
-      }
+      tint(255, 0, 0);
+      rotate(dir);
+      imageMode(CENTER);
+      image(planeImage, 0, 0, 30, 30);
     }
     pop();
   }
