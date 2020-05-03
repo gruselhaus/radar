@@ -33,7 +33,7 @@ function setup() {
   planeMap = mappa.tileMap(options);
   planeMap.overlay(canvas);
   getData();
-  time = setInterval(getData, 600);
+  time = setInterval(getData, 5000);
   angleMode(DEGREES);
 }
 
