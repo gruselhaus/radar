@@ -1,46 +1,46 @@
+/*
+ * Copyright (c) 2020 Nico Finkernagel <nico@gruselhaus.com>
+ */
+
+const url = "https://opensky-network.org/api/states/all?lamin=49.944079&lomin=8.403252&lamax=50.126740&lomax=8.817649";
+
 let mappa;
 let planeMap;
 let canvas;
-let url = "https://opensky-network.org/api/states/all?lamin=49.944079&lomin=8.403252&lamax=50.126740&lomax=8.817649";
-let time;
-const pos = {
-  lat: 0,
-  lon: 0,
-  track: 0,
-};
 
 let visible = false;
-let params = null;
-const options = {
-  lat: 50.03364,
-  lng: 8.557677,
-  zoom: 14,
-  style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
-};
 
 let planeImage, redPlaneImage, carImage;
 let planes = [];
 
+const toBeChecked = [RegExp(/^V\d*/), RegExp(/^FRA\d*/), RegExp(/^EL\d*/), RegExp(/^APT\d*/), RegExp(/^LEOS\d*/), RegExp(/^FF\d*/)];
+
 function preload() {
-  planeImage = loadImage("plane.png");
-  redPlaneImage = loadImage("plane-red.png");
-  carImage = loadImage("car.png");
+  planeImage = loadImage("assets/plane.png");
+  redPlaneImage = loadImage("assets/plane-red.png");
+  carImage = loadImage("assets/car.png");
 }
 
 function setup() {
   canvas = createCanvas(window.innerWidth, window.innerHeight);
-  mappa = new Mappa("Leaflet");
-  planeMap = mappa.tileMap(options);
-  planeMap.overlay(canvas);
-  getData();
-  time = setInterval(getData, 5000);
   angleMode(DEGREES);
+
+  mappa = new Mappa("Leaflet");
+  planeMap = mappa.tileMap({
+    lat: 50.03364,
+    lng: 8.557677,
+    zoom: 14,
+    style: "http://{s}.tile.osm.org/{z}/{x}/{y}.png",
+  });
+  planeMap.overlay(canvas);
+
+  getData();
+  setInterval(getData, 5000);
 }
 
 const getData = async () => {
   visible = true;
-  const data = await httpGet(url);
-  let formatted = JSON.parse(data);
+  let formatted = JSON.parse(await httpGet(url));
   planes = [];
   for (const state of formatted.states) {
     planes.push(new Plane(state));
@@ -50,21 +50,12 @@ const getData = async () => {
 function draw() {
   clear();
   if (visible) {
+    // Draw planes
     for (const plane of planes) {
       plane.show();
     }
-  }
-}
 
-class Plane {
-  constructor(states) {
-    this.states = states;
-  }
-
-  show() {
-    push();
-
-    //Draw boundaries
+    // Draw boundaries
     const pos1 = planeMap.latLngToPixel(49.944079, 8.817649);
     const pos2 = planeMap.latLngToPixel(50.12674, 8.817649);
     const pos3 = planeMap.latLngToPixel(50.12674, 8.403252);
@@ -78,13 +69,21 @@ class Plane {
     line(pos3.x, pos3.y, pos4.x, pos4.y);
     line(pos4.x, pos4.y, pos1.x, pos1.y);
     pop();
+  }
+}
 
-    const lat = this.states[6];
-    const lon = this.states[5];
-    const dir = this.states[10];
-    const pix = planeMap.latLngToPixel(lat, lon);
-    const callsign = this.states[1];
-    translate(pix.x, pix.y);
+class Plane {
+  constructor(states) {
+    this.states = states;
+  }
+
+  show() {
+    const callsign = this.states[1]; //Callsign
+    const pos = planeMap.latLngToPixel(this.states[6], this.states[5]); // plane position (lat, long)
+    const dir = this.states[10]; // real track in degrees
+
+    push();
+    translate(pos.x, pos.y);
     if (callsign !== "") {
       text(callsign, 24, 13);
       beginShape();
@@ -116,7 +115,6 @@ class Plane {
 }
 
 function checkCallsign(callsign) {
-  const toBeChecked = [RegExp(/^V\d*/), RegExp(/^FRA\d*/), RegExp(/^EL\d*/), RegExp(/^APT\d*/), RegExp(/^LEOS\d*/), RegExp(/^FF\d*/)];
   for (const elt of toBeChecked) {
     if (elt.test(callsign)) return true;
   }
