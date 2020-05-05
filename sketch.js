@@ -13,7 +13,7 @@ let visible = false;
 let planeImage, carImage;
 let planes = [];
 
-const toBeChecked = [RegExp(/^RM\d*/),RegExp(/^SIPO\d*/),RegExp(/^V\d*/), RegExp(/^FRA\d*/), RegExp(/^EL\d*/), RegExp(/^APT\d*/), RegExp(/^LEOS\d*/), RegExp(/^FF\d*/)];
+const toBeChecked = [RegExp(/^WLDLIFE\d*/),RegExp(/^DFS\d*/),RegExp(/^RM\d*/),RegExp(/^SIPO\d*/),RegExp(/^V\d*/), RegExp(/^FRA\d*/), RegExp(/^EL\d*/), RegExp(/^APT\d*/), RegExp(/^LEOS\d*/), RegExp(/^FF\d*/)];
 
 function preload() {
   planeImage = loadImage("assets/plane.png");
